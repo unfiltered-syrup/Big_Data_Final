@@ -1,30 +1,28 @@
 
+This project is a demographic analysis of indoor environmental complaints in new york city. 
 We have 2 datasets, a NYC environmental complaints dataset and a NYC demographics dataset.
 
 Step1:
 
 DATA INGESTION
-Data can be found in /jaden_code_drop/complaints_data.csv
-Data ingestion code can be found in /SourceCode/ingestion/Clean.java
 To run the code, upload Clean.java, Clean.class, Clean$CleanReducer.class, and Clean$CleanMapper.class
 to dataproc and run the following command:
-hadoop jar Clean.jar Clean jaden_code_drop/complaints_data.csv jaden_code_drop/ingestion_output
-Now, you should see the output in multiple text files in the /jaden_code_drop/ingestion_output directory. 
+hadoop jar Clean.jar Clean /complaints_data.csv /ingestion_output
+Now, you should see the output in multiple text files in the /ingestion_output directory. 
 Run the following command to merge the output files into one csv file:
-hadoop fs -cat jaden_code_drop/ingestion_output/part-* | hadoop fs -put - jaden_code_drop/complaints_data_ingested.csv
+hadoop fs -cat /ingestion_output/part-* | hadoop fs -put - /complaints_data_ingested.csv
 
 
 Step2:
 
 DATA CLEANING
  
-All data used by me during the cleaning process can be found in /jaden_code_drop
 The dataset used is here is "complaints_data_ingested.csv"
 
-All output data can be found as csv files in /jaden_code_drop, which is the output of the data ingestion process.
+All output data can be found as csv files in /, which is the output of the data ingestion process.
 
-To run the code for the environmental complaints dataset, run jaden_cleaning_code.scala (located in SourceCode/cleaning) using the command
-spark-shell --deploy-mode client -i jaden_cleaning_code.scala 
+To run the code for the environmental complaints dataset, run cleaning_code.scala (located in SourceCode/cleaning) using the command
+spark-shell --deploy-mode client -i cleaning_code.scala 
 
 Step3:
 
@@ -44,16 +42,16 @@ DATA PROFILING
 
 Step4:
 
-jaden_analysis_code.scala:
+analysis_code.scala:
 
-The input of the analysis is the result of the cleaning process in /jaden_code_drop/cleaning_output
+The input of the analysis is the result of the cleaning process in /cleaning_output
 and the output of Jethro's data cleaning process. Name the output of the cleaned complaints data as 
 "complaints_data_cleaned.csv" and the output of Jethro's demographic data as "demo_data_cleaned.csv".
-Put both files in /jaden_code_drop
+Put both files in /
 
-Then, run JadenAnalysisCode.scala (located in SourceCode/analysis) using the command
-spark-shell --deploy-mode client -i JadenAnalysisCode.scala
-All data output during the analysis process can be found in /jaden_code_drop/analysis_output
+Then, run AnalysisCode.scala (located in SourceCode/analysis) using the command
+spark-shell --deploy-mode client -i AnalysisCode.scala
+All data output during the analysis process can be found in /analysis_output
 
 Step5:
 
