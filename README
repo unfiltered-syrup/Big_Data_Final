@@ -1,0 +1,80 @@
+
+We have 2 datasets, a NYC environmental complaints dataset and a NYC demographics dataset.
+
+Step1:
+
+DATA INGESTION
+Data can be found in /jaden_code_drop/complaints_data.csv
+Data ingestion code can be found in /SourceCode/ingestion/Clean.java
+To run the code, upload Clean.java, Clean.class, Clean$CleanReducer.class, and Clean$CleanMapper.class
+to dataproc and run the following command:
+hadoop jar Clean.jar Clean jaden_code_drop/complaints_data.csv jaden_code_drop/ingestion_output
+Now, you should see the output in multiple text files in the /jaden_code_drop/ingestion_output directory. 
+Run the following command to merge the output files into one csv file:
+hadoop fs -cat jaden_code_drop/ingestion_output/part-* | hadoop fs -put - jaden_code_drop/complaints_data_ingested.csv
+
+
+Step2:
+
+DATA CLEANING
+ 
+All data used by me during the cleaning process can be found in /jaden_code_drop
+The dataset used is here is "complaints_data_ingested.csv"
+
+All output data can be found as csv files in /jaden_code_drop, which is the output of the data ingestion process.
+
+To run the code for the environmental complaints dataset, run jaden_cleaning_code.scala (located in SourceCode/cleaning) using the command
+spark-shell --deploy-mode client -i jaden_cleaning_code.scala 
+
+Step3:
+
+The code to clean the demographics dataset can be found in /etl_code/jethro_cheng.
+The dataset used here is "demo_2021acs5yr_nta.xlsx"
+
+To run the code for the demographics dataset, upload cleanedAgeDF.scala and cleanedRaceDF.scala.
+Then in dataproc, run 
+spark-shell --deploy-mode client --packages com.crealytics:spark-excel_2.12:0.13.7
+Once you are in spark, run
+:load cleanedAgeDF.scala 
+or 
+:load cleanedRaceDF.scala
+-----------------------------------------------------------------------------------------
+
+DATA PROFILING
+
+Step4:
+
+jaden_analysis_code.scala:
+
+The input of the analysis is the result of the cleaning process in /jaden_code_drop/cleaning_output
+and the output of Jethro's data cleaning process. Name the output of the cleaned complaints data as 
+"complaints_data_cleaned.csv" and the output of Jethro's demographic data as "demo_data_cleaned.csv".
+Put both files in /jaden_code_drop
+
+Then, run JadenAnalysisCode.scala (located in SourceCode/analysis) using the command
+spark-shell --deploy-mode client -i JadenAnalysisCode.scala
+All data output during the analysis process can be found in /jaden_code_drop/analysis_output
+
+Step5:
+
+To run the linear regression analysis (located in SourceCode/analysis) 
+First name the output of the previous analysis as dataset_additional_features.csv and run the following command
+spark-shell --deploy-mode client -i RegressionAnalysis.scala
+
+After running the regression analysis, you should see a list of coefficients in the console and 
+saved as a txt file in your local directory.
+
+Step6:
+
+The code to run the data profiling for the demographics dataset can be found in /profiling_code/jethro_cheng.
+
+To run the profiling code, upload MeanMedianAge.scala and MajorityRace.scala.
+Then in dataproc, run 
+spark-shell --deploy-mode client --packages com.crealytics:spark-excel_2.12:0.13.7
+Once you are in spark, run
+:load MeanMedianAge.scala 
+or 
+:load MajorityRace.scala
+
+
+
